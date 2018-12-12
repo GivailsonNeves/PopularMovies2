@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Popular Movies II</string>
+    <string name="popularidade">Popularidade</string>
+    <string name="avaliacao">Avaliação</string>
+    <string name="carregando">Carregando</string>
+    <string name="tentar_novamente">Tentar novamente</string>
+    <string name="poster_label">Poster do filme</string>
+    <string name="grid_poster_url">http://image.tmdb.org/t/p/w500/</string>
+</resources>
