@@ -14,16 +14,17 @@ import java.util.List;
 
 import br.com.givailson.popularmovies.R;
 import br.com.givailson.popularmovies.model.Movie;
-import butterknife.ButterKnife;
 
 public class GridMovieAdapter extends RecyclerView.Adapter<GridMovieAdapter.ViewHolderMovie> {
 
     private List<Movie> movies;
+    private OnItemClick itemClickListener;
 
-    public static class ViewHolderMovie extends RecyclerView.ViewHolder {
+    public class ViewHolderMovie extends RecyclerView.ViewHolder {
         private View view;
         private TextView tvTitle;
         private final String imageBasePath;
+        public int position = 0;
         private ImageView ivPoster;
 
         public ViewHolderMovie(View view) {
@@ -32,6 +33,13 @@ public class GridMovieAdapter extends RecyclerView.Adapter<GridMovieAdapter.View
             this.view = view;
             this.tvTitle = this.view.findViewById(R.id.tvTitle);
             this.ivPoster = this.view.findViewById(R.id.ivPoster);
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if( itemClickListener != null)
+                        itemClickListener.handleClick(movies.get(position));
+                }
+            });
         }
 
         public void prepareData(Movie movie) {
@@ -57,12 +65,23 @@ public class GridMovieAdapter extends RecyclerView.Adapter<GridMovieAdapter.View
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolderMovie viewHolderMovie, int i) {
+        viewHolderMovie.position = i;
         viewHolderMovie.prepareData(movies.get(i));
     }
 
     @Override
     public int getItemCount() {
         return this.movies.size();
+    }
+
+
+    public void setOnItemClick(OnItemClick handler) {
+        this.itemClickListener = handler;
+    }
+
+
+    public interface OnItemClick{
+        void handleClick(Movie movie);
     }
 
 }
