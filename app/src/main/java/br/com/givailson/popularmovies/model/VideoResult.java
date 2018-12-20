@@ -10,5 +10,5 @@ public class VideoResult {
     public int id;
 
     @SerializedName("results")
-    List<Video> videos;
+    public List<Video> videos;
 }

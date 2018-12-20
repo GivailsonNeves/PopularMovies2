@@ -13,4 +13,6 @@
     <string name="movie_parceble_name" translatable="false">movie</string>
     <string name="movie_list_parceble_name" translatable="false">movies</string>
     <string name="max_rate" translatable="false">/10</string>
+    <string name="trailers">Trailers:</string>
+    <string name="trailers_load_fail">Não foram encontrados trailers para este filme</string>
 </resources>

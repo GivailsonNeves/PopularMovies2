@@ -16,9 +16,9 @@ public interface MovieApiService {
     Call<MovieApiResult> listTopRating();
 
     @GET("3/movie/{id}/reviews")
-    Call<ReviewResult> listReviews(@Path("id") int videoId);
+    Call<ReviewResult> listReviews(@Path("id") long videoId);
 
     @GET("3/movie/{id}/videos")
-    Call<VideoResult> listTrailers(@Path("id") int videoId);
+    Call<VideoResult> listTrailers(@Path("id") long videoId);
 
 }
