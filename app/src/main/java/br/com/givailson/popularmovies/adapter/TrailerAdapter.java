@@ -2,7 +2,6 @@ package br.com.givailson.popularmovies.adapter;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +11,8 @@ import java.util.List;
 
 import br.com.givailson.popularmovies.R;
 import br.com.givailson.popularmovies.model.Video;
+import br.com.givailson.popularmovies.model.VideoResult;
+import retrofit2.Callback;
 
 public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerViewHolder> {
 

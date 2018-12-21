@@ -3,6 +3,7 @@ package br.com.givailson.popularmovies.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -23,6 +24,8 @@ import java.util.List;
 
 import br.com.givailson.popularmovies.R;
 import br.com.givailson.popularmovies.adapter.GridMovieAdapter;
+import br.com.givailson.popularmovies.data.MovieFavorite;
+import br.com.givailson.popularmovies.data.MovieFavoriteContract;
 import br.com.givailson.popularmovies.model.Movie;
 import br.com.givailson.popularmovies.model.MovieApiResult;
 import br.com.givailson.popularmovies.retrofit.MovieApiService;
@@ -62,22 +65,46 @@ public class GridMovieFragment extends Fragment implements Callback<MovieApiResu
     }
 
     private void loadMovies() {
-        if(isConnected()) {
-            showLoading();
-            MovieApiService movieApiService = new RetrofitMovieDB(this.getContext())
-                    .movieApiService();
 
-            Call<MovieApiResult> listMovie;
-            if (selectedFilter == R.id.mn_rate)
-                listMovie = movieApiService.listTopRating();
-            else
-                listMovie = movieApiService.listPopular();
 
-            listMovie.enqueue(this);
-        } else {
-            this.showErrorMessage(getString(R.string.connection_fail));
+        if(selectedFilter == R.id.mn_favorites || selectedFilter == R.id.mn_popularity || selectedFilter == R.id.mn_rate) {
+            if (isConnected()) {
+                showLoading();
+
+                Call<MovieApiResult> listMovie;
+
+                if (selectedFilter == R.id.mn_rate) {
+                    MovieApiService movieApiService = new RetrofitMovieDB(this.getContext())
+                            .movieApiService();
+                    listMovie = movieApiService.listTopRating();
+                    listMovie.enqueue(this);
+
+                } else if(selectedFilter == R.id.mn_popularity) {
+                    MovieApiService movieApiService = new RetrofitMovieDB(this.getContext())
+                            .movieApiService();
+                    listMovie = movieApiService.listPopular();
+                    listMovie.enqueue(this);
+
+                } else {
+                    Cursor cursor = getActivity().getContentResolver().query(MovieFavoriteContract.MovieFavoriteEntry.CONTENT_URI,
+                            null,
+                            null,
+                            null,
+                            null);
+                    if(cursor.getCount() > 0) {
+                        this.movies = MovieFavorite.listMovieFromCursor(cursor);
+                        mountList();
+                        this.hideLoading();
+                    } else {
+                        this.showErrorMessage(getString(R.string.no_favorites));
+                    }
+
+                }
+
+            } else {
+                this.showErrorMessage(getString(R.string.connection_fail));
+            }
         }
-
 
     }
 

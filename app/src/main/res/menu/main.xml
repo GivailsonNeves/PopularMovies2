@@ -10,6 +10,8 @@
                 android:id="@+id/mn_popularity"/>
             <item android:title="@string/avaliacao"
                 android:id="@+id/mn_rate"/>
+            <item android:title="@string/favoritos"
+                android:id="@+id/mn_favorites"/>
         </menu>
     </item>
 

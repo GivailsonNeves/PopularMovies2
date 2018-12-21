@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:background="@color/white"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <android.support.constraint.ConstraintLayout
@@ -100,56 +101,80 @@
 
         <LinearLayout
             android:id="@+id/areaTrailers"
-            android:visibility="gone"
             android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
+            android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/dTrailers"
-            android:layout_height="wrap_content">
+            app:layout_constraintTop_toBottomOf="@+id/dTrailers">
+
             <TextView
                 android:id="@+id/tvTrailers"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="15dp"
-                android:layout_marginEnd="8dp"
                 android:text="@string/trailers"
                 android:textSize="18sp" />
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rvTrailers"
                 android:layout_width="match_parent"
-                android:background="@android:color/darker_gray"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
                 android:layout_margin="20dp"
-                android:layout_height="wrap_content" />
+                android:background="@android:color/darker_gray" />
+
+            <TextView
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                android:id="@+id/tvNoTrailers"
+                android:text="@string/no_trailers"
+                android:layout_width="match_parent"
+                android:visibility="gone"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"/>
+
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/areaResumes"
-            android:visibility="gone"
             android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/areaTrailers"
-            android:layout_height="wrap_content">
+            app:layout_constraintTop_toBottomOf="@+id/areaTrailers">
+
             <TextView
                 android:id="@+id/tvResumes"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="15dp"
-                android:layout_marginEnd="8dp"
-                android:text="@string/trailers"
+                android:text="@string/resenhas"
                 android:textSize="18sp" />
 
             <android.support.v7.widget.RecyclerView
+                android:visibility="gone"
                 android:id="@+id/rvResumes"
                 android:layout_width="match_parent"
-                android:background="@android:color/darker_gray"
+                android:layout_height="wrap_content"
                 android:layout_margin="20dp"
-                android:layout_height="wrap_content" />
+                android:background="@android:color/darker_gray" />
+
+            <TextView
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                android:visibility="gone"
+                android:id="@+id/tvNoReviews"
+                android:text="@string/no_reviews"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"/>
         </LinearLayout>
 
 

@@ -19,8 +19,10 @@ import android.widget.Toast;
 import com.squareup.picasso.Picasso;
 
 import br.com.givailson.popularmovies.R;
+import br.com.givailson.popularmovies.adapter.ReviewAdapter;
 import br.com.givailson.popularmovies.adapter.TrailerAdapter;
 import br.com.givailson.popularmovies.model.Movie;
+import br.com.givailson.popularmovies.model.ReviewResult;
 import br.com.givailson.popularmovies.model.Video;
 import br.com.givailson.popularmovies.model.VideoResult;
 import br.com.givailson.popularmovies.retrofit.MovieApiService;
@@ -32,7 +34,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
-public class MovieActivity extends AppCompatActivity implements Callback<VideoResult>,TrailerAdapter.OnItemClick {
+public class MovieActivity extends AppCompatActivity {
 
     @BindView(R.id.ivPoster) ImageView ivPoster;
     @BindView(R.id.tvTitle) TextView tvTitle;
@@ -41,10 +43,10 @@ public class MovieActivity extends AppCompatActivity implements Callback<VideoRe
     @BindView(R.id.tvDuration) TextView tvDuration;
     @BindView(R.id.tvYear) TextView tvYear;
     @BindView(R.id.rvTrailers) RecyclerView trailersList;
-    @BindView(R.id.areaTrailers) View areaTrailers;
-    @BindView(R.id.areaResumes) View areaResumes;
+    @BindView(R.id.tvNoTrailers) View tvNoTrailers;
+    @BindView(R.id.tvNoReviews) TextView tvNoReviews;
     @BindView(R.id.tvResumes) TextView tvResumes;
-    @BindView(R.id.rvTrailers) RecyclerView rvResumes;
+    @BindView(R.id.rvResumes) RecyclerView rvResumes;
 
     private String basePathImage;
     private Movie movie;
@@ -76,6 +78,7 @@ public class MovieActivity extends AppCompatActivity implements Callback<VideoRe
                     .into(ivPoster);
 
             this.prepareTrailers();
+            this.prepareReviews();
         } else {
 
         }
@@ -86,7 +89,62 @@ public class MovieActivity extends AppCompatActivity implements Callback<VideoRe
                 .movieApiService();
 
         movieApiService.listTrailers(this.movie.id)
-                .enqueue(this);
+                .enqueue(new Callback<VideoResult>(){
+
+                    @Override
+                    public void onResponse(Call<VideoResult> call, Response<VideoResult> response) {
+                        if(response.code() == 200 && response.body().videos.size() > 0) {
+                            tvNoTrailers.setVisibility(View.GONE);
+                            trailersList.setVisibility(View.VISIBLE);
+                            TrailerAdapter adapter = new TrailerAdapter(response.body().videos);
+                            adapter.setOnItemClick(new TrailerAdapter.OnItemClick() {
+                                @Override
+                                public void handleClick(Video video) {
+                                    openYoutube(video);
+                                }
+                            });
+                            trailersList.setLayoutManager(new LinearLayoutManager(getParent()));
+                            trailersList.setAdapter(adapter);
+                        } else {
+                            showTrailersFail();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<VideoResult> call, Throwable t) {
+                        showTrailersFail();
+                    }
+                });
+    }
+
+    private void prepareReviews() {
+        MovieApiService movieApiService = new RetrofitMovieDB(this)
+                .movieApiService();
+
+        movieApiService.listReviews(this.movie.id)
+                .enqueue(new Callback<ReviewResult>() {
+                    @Override
+                    public void onResponse(Call<ReviewResult> call, Response<ReviewResult> response) {
+
+                        if(response.code() == 200 && response.body().reviews.size() > 0) {
+                            tvNoReviews.setVisibility(View.GONE);
+                            rvResumes.setVisibility(View.VISIBLE);
+
+                            ReviewAdapter reviewAdapter = new ReviewAdapter(response.body().reviews);
+                            rvResumes.setLayoutManager(new LinearLayoutManager(getParent()));
+                            rvResumes.setAdapter(reviewAdapter);
+
+                        } else {
+                          showReviewsFail();
+                        }
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<ReviewResult> call, Throwable t) {
+                        showReviewsFail();
+                    }
+                });
     }
 
     private void prepareActionBar() {
@@ -105,32 +163,17 @@ public class MovieActivity extends AppCompatActivity implements Callback<VideoRe
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onResponse(Call<VideoResult> call, Response<VideoResult> response) {
-        if(response.code() == 200 && response.body().videos.size() > 0) {
-            this.areaTrailers.setVisibility(View.VISIBLE);
-            TrailerAdapter adapter = new TrailerAdapter(response.body().videos);
-            adapter.setOnItemClick(this);
-            this.trailersList.setLayoutManager(new LinearLayoutManager(this));
-            this.trailersList.setAdapter(adapter);
-        } else {
-            this.showTrailersFail();
-        }
-    }
-
-    @Override
-    public void onFailure(Call<VideoResult> call, Throwable t) {
-        this.showTrailersFail();
-    }
-
     private void showTrailersFail() {
-        this.areaTrailers.setVisibility(View.GONE);
-        Toast.makeText(this, R.string.trailers_load_fail, Toast.LENGTH_LONG)
-                .show();
+        tvNoTrailers.setVisibility(View.VISIBLE);
+        trailersList.setVisibility(View.GONE);
     }
 
-    @Override
-    public void handleClick(Video video) {
+    private void showReviewsFail() {
+        tvNoReviews.setVisibility(View.VISIBLE);
+        rvResumes.setVisibility(View.GONE);
+    }
+
+    private void openYoutube(Video video) {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube" + video.key));
 
         if(intent.resolveActivity(getPackageManager()) == null) {

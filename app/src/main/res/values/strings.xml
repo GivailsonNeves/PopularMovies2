@@ -8,11 +8,18 @@
     <string name="connection_fail">Não a conectividade com a internet, verifique sua rede</string>
     <string name="error_loading">Erro ao carregar os filmes, tente novamente</string>
     <string name="error_loading_code">Erro ao carregar dados, code: </string>
+    <string name="trailers">Trailers:</string>
+    <string name="trailers_load_fail">Não foram encontrados trailers para este filme</string>
+    <string name="resenhas">Resenhas:</string>
+    <string name="no_trailers">Não foram encontrados trailers para este filme!</string>
+    <string name="no_reviews">Não foram encontradas resenhas para este filme.</string>
+    <string name="favoritos">Favoritos</string>
+
     <string name="grid_poster_inner_url" translatable="false">http://image.tmdb.org/t/p/w342</string>
     <string name="grid_poster_url" translatable="false">http://image.tmdb.org/t/p/w500/</string>
     <string name="movie_parceble_name" translatable="false">movie</string>
     <string name="movie_list_parceble_name" translatable="false">movies</string>
     <string name="max_rate" translatable="false">/10</string>
-    <string name="trailers">Trailers:</string>
-    <string name="trailers_load_fail">Não foram encontrados trailers para este filme</string>
+    <string name="content_authority" translatable="false">br.com.givailson.popularmovies.app</string>
+    <string name="no_favorites">Não existem filmes salvos como favoitos</string>
 </resources>
