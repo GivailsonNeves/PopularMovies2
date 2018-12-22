@@ -10,12 +10,14 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -24,7 +26,6 @@ import java.util.List;
 
 import br.com.givailson.popularmovies.R;
 import br.com.givailson.popularmovies.adapter.GridMovieAdapter;
-import br.com.givailson.popularmovies.data.MovieFavorite;
 import br.com.givailson.popularmovies.data.MovieFavoriteContract;
 import br.com.givailson.popularmovies.model.Movie;
 import br.com.givailson.popularmovies.model.MovieApiResult;
@@ -37,7 +38,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class GridMovieFragment extends Fragment implements Callback<MovieApiResult>,GridMovieAdapter.OnItemClick {
+public class GridMovieFragment extends Fragment implements Callback<MovieApiResult>,GridMovieAdapter.OnItemClick, LoaderManager.LoaderCallbacks<Cursor> {
 
     @BindView(R.id.gv_movies_list) RecyclerView gridMovieList;
     @BindView(R.id.v_nodata) View vNoData;
@@ -47,6 +48,7 @@ public class GridMovieFragment extends Fragment implements Callback<MovieApiResu
     private int selectedFilter;
     private GridMovieAdapter gridMovieAdapter;
     private List<Movie> movies;
+    private final int CURSOR_LOADER_ID = 0;
 
     public GridMovieFragment() {}
 
@@ -86,18 +88,7 @@ public class GridMovieFragment extends Fragment implements Callback<MovieApiResu
                     listMovie.enqueue(this);
 
                 } else {
-                    Cursor cursor = getActivity().getContentResolver().query(MovieFavoriteContract.MovieFavoriteEntry.CONTENT_URI,
-                            null,
-                            null,
-                            null,
-                            null);
-                    if(cursor.getCount() > 0) {
-                        this.movies = MovieFavorite.listMovieFromCursor(cursor);
-                        mountList();
-                        this.hideLoading();
-                    } else {
-                        this.showErrorMessage(getString(R.string.no_favorites));
-                    }
+                    getLoaderManager().restartLoader(CURSOR_LOADER_ID, null, this);
 
                 }
 
@@ -106,6 +97,14 @@ public class GridMovieFragment extends Fragment implements Callback<MovieApiResu
             }
         }
 
+    }
+
+    @Override
+    public void onResume() {
+        if(selectedFilter == R.id.mn_favorites)
+            getLoaderManager().restartLoader(CURSOR_LOADER_ID, null, this);
+
+        super.onResume();
     }
 
     private View prepareUI(LayoutInflater inflater, ViewGroup container) {
@@ -194,5 +193,37 @@ public class GridMovieFragment extends Fragment implements Callback<MovieApiResu
         Intent intentMovie = new Intent(this.getActivity(), MovieActivity.class);
         intentMovie.putExtra(getString(R.string.movie_parceble_name), movie);
         startActivity(intentMovie);
+    }
+
+    @NonNull
+    @Override
+    public Loader<Cursor> onCreateLoader(int i, @Nullable Bundle bundle) {
+        CursorLoader cursorLoader = new CursorLoader(getActivity(),
+                MovieFavoriteContract.MovieFavoriteEntry.CONTENT_URI,
+                null,
+                null,
+                null,
+                null);
+
+        return cursorLoader;
+    }
+
+    @Override
+    public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor cursor) {
+
+        if(selectedFilter == R.id.mn_favorites) {
+            this.movies = MovieFavoriteContract.listMovieFromCursor(cursor);
+            if(this.movies.size() > 0) {
+                this.hideLoading();
+                mountList();
+            } else {
+                this.showErrorMessage(getString(R.string.no_favorites));
+            }
+        }
+    }
+
+    @Override
+    public void onLoaderReset(@NonNull Loader<Cursor> loader) {
+        return;
     }
 }

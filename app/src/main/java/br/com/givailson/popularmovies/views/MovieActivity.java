@@ -1,26 +1,36 @@
 package br.com.givailson.popularmovies.views;
 
+import android.content.ContentValues;
 import android.content.Intent;
+
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.LoaderManager;
 import android.support.v4.app.NavUtils;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
 import br.com.givailson.popularmovies.R;
 import br.com.givailson.popularmovies.adapter.ReviewAdapter;
 import br.com.givailson.popularmovies.adapter.TrailerAdapter;
+import br.com.givailson.popularmovies.data.MovieFavoriteContract;
 import br.com.givailson.popularmovies.model.Movie;
 import br.com.givailson.popularmovies.model.ReviewResult;
 import br.com.givailson.popularmovies.model.Video;
@@ -32,9 +42,8 @@ import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
 
-public class MovieActivity extends AppCompatActivity {
+public class MovieActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     @BindView(R.id.ivPoster) ImageView ivPoster;
     @BindView(R.id.tvTitle) TextView tvTitle;
@@ -47,9 +56,12 @@ public class MovieActivity extends AppCompatActivity {
     @BindView(R.id.tvNoReviews) TextView tvNoReviews;
     @BindView(R.id.tvResumes) TextView tvResumes;
     @BindView(R.id.rvResumes) RecyclerView rvResumes;
+    @BindView(R.id.chkFavorite) CheckBox chkFavorite;
 
     private String basePathImage;
     private Movie movie;
+    private final int CURSOR_LOADER_ID = 10;
+    private boolean initialChange;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +71,7 @@ public class MovieActivity extends AppCompatActivity {
         this.basePathImage = getString(R.string.grid_poster_inner_url);
         prepareActionBar();
         prepareMovie();
+        checkFavorite();
     }
 
     private void prepareMovie() {
@@ -79,9 +92,43 @@ public class MovieActivity extends AppCompatActivity {
 
             this.prepareTrailers();
             this.prepareReviews();
+            
+            this.chkFavorite.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if(!initialChange) {
+                        if (isChecked) {
+                            addAsFavorite();
+                        } else {
+                            removeAsFavorite();
+                        }
+                    }
+                    initialChange = false;
+                }
+            });
         } else {
 
         }
+    }
+
+    private void removeAsFavorite() {
+
+        getContentResolver().delete(MovieFavoriteContract.MovieFavoriteEntry.buildFlavorsUri(movie.id),
+                null,
+                null);
+    }
+
+    private void addAsFavorite() {
+
+        ContentValues values = new ContentValues();
+        values.put(MovieFavoriteContract.MovieFavoriteEntry.ID, movie.getId());
+        values.put(MovieFavoriteContract.MovieFavoriteEntry.TITLE, movie.getTitle());
+        values.put(MovieFavoriteContract.MovieFavoriteEntry.URI_PHOTO, movie.getUriPhoto());
+        values.put(MovieFavoriteContract.MovieFavoriteEntry.OVERVIEW, movie.getOverview());
+        values.put(MovieFavoriteContract.MovieFavoriteEntry.RATE, movie.getRate());
+        values.put(MovieFavoriteContract.MovieFavoriteEntry.RELEASE_DATE, movie.getReleaseDate());
+
+        getContentResolver().insert(MovieFavoriteContract.MovieFavoriteEntry.CONTENT_URI,values);
     }
 
     private void prepareTrailers() {
@@ -181,5 +228,42 @@ public class MovieActivity extends AppCompatActivity {
         }
 
         startActivity(intent);
+    }
+
+    private void checkFavorite() {
+
+        getSupportLoaderManager().initLoader(CURSOR_LOADER_ID, null, this);
+
+    }
+
+
+    @NonNull
+    @Override
+    public Loader<Cursor> onCreateLoader(int i, @Nullable Bundle bundle) {
+        CursorLoader cursorLoader = new CursorLoader(this,
+                MovieFavoriteContract.MovieFavoriteEntry.buildFlavorsUri(movie.getId()),
+                null,
+                null,
+                null,
+                null);
+
+
+
+        return cursorLoader;
+    }
+
+    @Override
+    public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor cursor) {
+
+        Log.i("finish", String.valueOf(cursor.getCount()));
+        initialChange = cursor.getCount() > 0;
+
+        chkFavorite.setChecked(initialChange);
+
+    }
+
+    @Override
+    public void onLoaderReset(@NonNull Loader<Cursor> cursor) {
+        Log.i("finish", "1");
     }
 }

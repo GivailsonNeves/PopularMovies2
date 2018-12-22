@@ -2,8 +2,14 @@ package br.com.givailson.popularmovies.data;
 
 import android.content.ContentResolver;
 import android.content.ContentUris;
+import android.database.Cursor;
 import android.net.Uri;
 import android.provider.BaseColumns;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import br.com.givailson.popularmovies.model.Movie;
 
 public class MovieFavoriteContract {
 
@@ -36,6 +42,27 @@ public class MovieFavoriteContract {
         public static Uri buildFlavorsUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
+    }
+
+    public static List<Movie> listMovieFromCursor(Cursor cursor) {
+        List<Movie> listMoviews = new ArrayList<>();
+
+        if (cursor.moveToFirst()) {
+            while (!cursor.isAfterLast()) {
+                listMoviews.add(
+                    new Movie(
+                        cursor.getLong(cursor.getColumnIndex(MovieFavoriteContract.MovieFavoriteEntry.ID)),
+                        cursor.getString(cursor.getColumnIndex(MovieFavoriteContract.MovieFavoriteEntry.TITLE)),
+                        cursor.getString(cursor.getColumnIndex(MovieFavoriteContract.MovieFavoriteEntry.URI_PHOTO)),
+                        cursor.getString(cursor.getColumnIndex(MovieFavoriteContract.MovieFavoriteEntry.OVERVIEW)),
+                        cursor.getDouble(cursor.getColumnIndex(MovieFavoriteContract.MovieFavoriteEntry.RATE)),
+                        cursor.getString(cursor.getColumnIndex(MovieFavoriteContract.MovieFavoriteEntry.RELEASE_DATE))
+                    )
+                );
+                cursor.moveToNext();
+            }
+        }
+        return listMoviews;
     }
 
 }
