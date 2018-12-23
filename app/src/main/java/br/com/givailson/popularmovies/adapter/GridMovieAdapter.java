@@ -1,5 +1,6 @@
 package br.com.givailson.popularmovies.adapter;
 
+import android.content.res.Configuration;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -27,6 +28,9 @@ public class GridMovieAdapter extends RecyclerView.Adapter<GridMovieAdapter.View
         public int position = 0;
         private ImageView ivPoster;
 
+        private static final int IMAGE_DEFAULT_HEIGHT = 750;
+        private static final int IMAGE_DEFAULT_WIDTH = 500;
+
         public ViewHolderMovie(View view) {
             super(view);
             imageBasePath = view.getContext().getString(R.string.grid_poster_url);
@@ -40,6 +44,12 @@ public class GridMovieAdapter extends RecyclerView.Adapter<GridMovieAdapter.View
                         itemClickListener.handleClick(movies.get(position));
                 }
             });
+
+            int windowSize = view.getResources().getDisplayMetrics().widthPixels;
+            int totalRows = view.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT ? 2 : 3;
+            final int imageWidthSize = windowSize / totalRows;
+            this.ivPoster.getLayoutParams().width = imageWidthSize;
+            this.ivPoster.getLayoutParams().height = (int) ( IMAGE_DEFAULT_HEIGHT * ((float) imageWidthSize / IMAGE_DEFAULT_WIDTH) );
         }
 
         public void prepareData(Movie movie) {

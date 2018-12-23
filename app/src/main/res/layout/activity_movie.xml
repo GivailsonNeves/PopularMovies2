@@ -30,9 +30,9 @@
             android:id="@+id/ivPoster"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:minHeight="150dp"
+            android:layout_marginStart="@dimen/image_start_margin"
+            android:layout_marginTop="@dimen/image_top_margin"
+            android:minHeight="@dimen/image_min_height"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
 
@@ -40,9 +40,9 @@
             android:id="@+id/tvYear"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="8dp"
-            android:textSize="18sp"
+            android:layout_marginStart="@dimen/year_start_margin"
+            android:layout_marginTop="@dimen/year_top_margin"
+            android:textSize="@dimen/year_font_size"
             app:layout_constraintStart_toEndOf="@+id/ivPoster"
             app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
 
@@ -50,8 +50,8 @@
             android:id="@+id/tvDuration"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:textSize="14sp"
+            android:layout_marginTop="@dimen/duration_top_margin"
+            android:textSize="@dimen/duration_font_size"
             android:textStyle="italic"
             app:layout_constraintStart_toStartOf="@+id/tvYear"
             app:layout_constraintTop_toBottomOf="@+id/tvYear" />
@@ -60,8 +60,8 @@
             android:id="@+id/tvRate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:textSize="10sp"
+            android:layout_marginTop="@dimen/rate_top_margin"
+            android:textSize="@dimen/rate_font_size"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="@+id/tvDuration"
             app:layout_constraintTop_toBottomOf="@+id/tvDuration" />
@@ -70,18 +70,18 @@
             android:id="@+id/chkFavorite"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/favorite_top_margin"
             android:text="Favoritar"
-            android:textColor="@android:color/darker_gray"
+            android:textColor="@color/darker_gray"
             app:layout_constraintStart_toStartOf="@+id/tvRate"
             app:layout_constraintTop_toBottomOf="@+id/tvRate" />
 
         <TextView
             android:id="@+id/tvReview"
-            android:layout_width="0dp"
+            android:layout_width="@dimen/review_width"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginTop="@dimen/review_top_margin"
+            android:layout_marginEnd="@dimen/review_h_margin"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/ivPoster"
             app:layout_constraintTop_toBottomOf="@+id/ivPoster" />
@@ -89,10 +89,10 @@
         <View
             android:id="@+id/dTrailers"
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="15dp"
-            android:layout_marginEnd="8dp"
+            android:layout_height="@dimen/movie_divisor_height"
+            android:layout_marginStart="@dimen/movie_divisor_h_margin"
+            android:layout_marginTop="@dimen/movie_division_top_margin"
+            android:layout_marginEnd="@dimen/movie_divisor_h_margin"
             android:background="?android:attr/listDivider"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -112,23 +112,23 @@
                 android:id="@+id/tvTrailers"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="15dp"
+                android:layout_marginEnd="@dimen/section_text_vertical_padding"
+                android:layout_marginStart="@dimen/section_text_vertical_padding"
+                android:layout_marginTop="@dimen/section_text_top"
                 android:text="@string/trailers"
-                android:textSize="18sp" />
+                android:textSize="@dimen/section_title_font_size" />
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rvTrailers"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:visibility="gone"
-                android:layout_margin="20dp"
-                android:background="@android:color/darker_gray" />
+                android:layout_margin="@dimen/section_list_margin"
+                android:background="@color/darker_gray" />
 
             <TextView
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="20dp"
+                android:layout_marginTop="@dimen/no_data_padding"
+                android:layout_marginBottom="@dimen/no_data_padding"
                 android:id="@+id/tvNoTrailers"
                 android:text="@string/no_trailers"
                 android:layout_width="match_parent"
@@ -151,23 +151,23 @@
                 android:id="@+id/tvResumes"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="15dp"
+                android:layout_marginEnd="@dimen/section_text_vertical_padding"
+                android:layout_marginStart="@dimen/section_text_vertical_padding"
+                android:layout_marginTop="@dimen/section_text_top"
                 android:text="@string/resenhas"
-                android:textSize="18sp" />
+                android:textSize="@dimen/section_title_font_size" />
 
             <android.support.v7.widget.RecyclerView
                 android:visibility="gone"
                 android:id="@+id/rvResumes"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="20dp"
-                android:background="@android:color/darker_gray" />
+                android:layout_margin="@dimen/section_list_margin"
+                android:background="@color/darker_gray" />
 
             <TextView
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="20dp"
+                android:layout_marginTop="@dimen/no_data_padding"
+                android:layout_marginBottom="@dimen/no_data_padding"
                 android:visibility="gone"
                 android:id="@+id/tvNoReviews"
                 android:text="@string/no_reviews"

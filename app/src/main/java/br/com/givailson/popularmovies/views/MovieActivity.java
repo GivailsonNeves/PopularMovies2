@@ -3,6 +3,7 @@ package br.com.givailson.popularmovies.views;
 import android.content.ContentValues;
 import android.content.Intent;
 
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -61,7 +62,6 @@ public class MovieActivity extends AppCompatActivity implements LoaderManager.Lo
     private String basePathImage;
     private Movie movie;
     private final int CURSOR_LOADER_ID = 10;
-    private boolean initialChange;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +72,7 @@ public class MovieActivity extends AppCompatActivity implements LoaderManager.Lo
         prepareActionBar();
         prepareMovie();
         checkFavorite();
+        prepareCheckFavoritEvent();
     }
 
     private void prepareMovie() {
@@ -92,21 +93,6 @@ public class MovieActivity extends AppCompatActivity implements LoaderManager.Lo
 
             this.prepareTrailers();
             this.prepareReviews();
-            
-            this.chkFavorite.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if(!initialChange) {
-                        if (isChecked) {
-                            addAsFavorite();
-                        } else {
-                            removeAsFavorite();
-                        }
-                    }
-                    initialChange = false;
-                }
-            });
-        } else {
 
         }
     }
@@ -128,7 +114,7 @@ public class MovieActivity extends AppCompatActivity implements LoaderManager.Lo
         values.put(MovieFavoriteContract.MovieFavoriteEntry.RATE, movie.getRate());
         values.put(MovieFavoriteContract.MovieFavoriteEntry.RELEASE_DATE, movie.getReleaseDate());
 
-        getContentResolver().insert(MovieFavoriteContract.MovieFavoriteEntry.CONTENT_URI,values);
+        getContentResolver().insert(MovieFavoriteContract.MovieFavoriteEntry.CONTENT_URI, values);
     }
 
     private void prepareTrailers() {
@@ -255,11 +241,20 @@ public class MovieActivity extends AppCompatActivity implements LoaderManager.Lo
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor cursor) {
 
-        Log.i("finish", String.valueOf(cursor.getCount()));
-        initialChange = cursor.getCount() > 0;
+        chkFavorite.setChecked(cursor.getCount() > 0);
 
-        chkFavorite.setChecked(initialChange);
+    }
 
+    private void prepareCheckFavoritEvent() {
+        this.chkFavorite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(chkFavorite.isChecked())
+                    addAsFavorite();
+                else
+                    removeAsFavorite();
+            }
+        });
     }
 
     @Override

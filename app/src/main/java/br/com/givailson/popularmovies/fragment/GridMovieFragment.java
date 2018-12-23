@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -40,6 +41,9 @@ import retrofit2.Response;
 
 public class GridMovieFragment extends Fragment implements Callback<MovieApiResult>,GridMovieAdapter.OnItemClick, LoaderManager.LoaderCallbacks<Cursor> {
 
+    private static final String SAVED_LAYOUT_MANAGER = "SAVED_LAYOUT_MANAGER";
+    private static final String SELECTED_FILTER = "SELECTED_FILTER";
+
     @BindView(R.id.gv_movies_list) RecyclerView gridMovieList;
     @BindView(R.id.v_nodata) View vNoData;
     @BindView(R.id.v_loading) View vLoading;
@@ -50,6 +54,7 @@ public class GridMovieFragment extends Fragment implements Callback<MovieApiResu
     private List<Movie> movies;
     private final int CURSOR_LOADER_ID = 0;
 
+
     public GridMovieFragment() {}
 
     @Nullable
@@ -57,7 +62,9 @@ public class GridMovieFragment extends Fragment implements Callback<MovieApiResu
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View rootView = prepareUI(inflater, container);
-        this.orderBy(R.id.mn_popularity);
+        if(!restoreState(savedInstanceState))
+            this.orderBy(R.id.mn_popularity);
+
         return rootView;
     }
 
@@ -122,16 +129,29 @@ public class GridMovieFragment extends Fragment implements Callback<MovieApiResu
     @Override
     public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
         savedInstanceState.putParcelableArrayList(getString(R.string.movie_list_parceble_name), (ArrayList<Movie>) this.movies);
+        savedInstanceState.putParcelable(SAVED_LAYOUT_MANAGER, gridMovieList.getLayoutManager().onSaveInstanceState());
+        savedInstanceState.putInt(SELECTED_FILTER, selectedFilter);
         super.onSaveInstanceState(savedInstanceState);
     }
 
     @Override
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
+        restoreState(savedInstanceState);
+    }
+
+    private boolean restoreState(@NonNull Bundle savedInstanceState) {
         if(savedInstanceState != null) {
             this.movies = savedInstanceState.getParcelableArrayList(getString(R.string.movie_list_parceble_name));
             mountList();
+
+            Parcelable layoutStateSaved = savedInstanceState.getParcelable(SAVED_LAYOUT_MANAGER);
+
+            gridMovieList.getLayoutManager().onRestoreInstanceState(layoutStateSaved);
+            selectedFilter = savedInstanceState.getInt(SELECTED_FILTER);
+            return true;
         }
+        return false;
     }
 
     @Override
@@ -172,6 +192,7 @@ public class GridMovieFragment extends Fragment implements Callback<MovieApiResu
 
 
     private void showErrorMessage(String message) {
+        gridMovieList.setVisibility(View.GONE);
         vLoading.setVisibility(View.GONE);
         vNoData.setVisibility(View.VISIBLE);
         Toast.makeText(this.getContext(),message, Toast.LENGTH_LONG)
@@ -215,10 +236,10 @@ public class GridMovieFragment extends Fragment implements Callback<MovieApiResu
             this.movies = MovieFavoriteContract.listMovieFromCursor(cursor);
             if(this.movies.size() > 0) {
                 this.hideLoading();
-                mountList();
             } else {
                 this.showErrorMessage(getString(R.string.no_favorites));
             }
+            mountList();
         }
     }
 

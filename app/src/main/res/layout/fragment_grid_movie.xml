@@ -38,11 +38,11 @@
             <ProgressBar
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:minHeight="100dp"
-                android:minWidth="100dp" />
+                android:minHeight="@dimen/progress_min_size"
+                android:minWidth="@dimen/progress_min_size" />
             <TextView
                 android:text="@string/carregando"
-                android:textSize="20sp"
+                android:textSize="@dimen/progress_font_size"
                 android:layout_gravity="center"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />

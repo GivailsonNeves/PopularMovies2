@@ -4,9 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center"
-    android:paddingTop="10dp"
-    android:paddingBottom="10dp"
-    android:layout_marginBottom="1dp"
+    android:paddingTop="@dimen/item_padding"
+    android:paddingBottom="@dimen/item_padding"
+    android:layout_marginBottom="@dimen/margin_line"
     android:background="@color/white"
     android:orientation="horizontal">
 
@@ -14,7 +14,7 @@
         android:id="@+id/imageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="20dp"
+        android:layout_marginRight="@dimen/trailer_indent"
         app:srcCompat="@android:drawable/ic_media_play" />
 
     <TextView
